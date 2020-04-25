@@ -84,4 +84,51 @@ bom_rainfall_data <- bom_data %>%
   filter(Rainfall !="-") %>% 
   mutate(Rainfall= as.numeric(Rainfall))
 
-bom_rainfall_data  
+bom_rainfall_data 
+view(bom_rainfall_data)
+
+
+
+
+bom_stations_numeric
+
+bom_rainfall_full <- full_join(bom_rainfall_data, bom_stations_numeric)
+bom_rainfall_full
+
+view(bom_rainfall_full)
+
+
+rainfall_by_station
+
+bom_monthly_total_RF <- bom_rainfall_full %>% 
+  group_by(Station_number, name, state, Year, Month, state) %>% 
+  summarise(monthly_total_RF=sum(Rainfall))
+
+
+bom_monthly_average_RF<- bom_monthly_total_RF %>% 
+  group_by(Station_number,name, state, Month) %>% 
+  summarise(average_monthly_RF=mean(monthly_total_RF)) 
+
+bom_monthly_average_RF
+
+bom_text <- bom_monthly_average_RF %>% filter(Month==1)
+
+bom_text 
+
+
+# generating plots
+
+rough_plot <- ggplot(bom_monthly_average_RF, 
+       mapping = aes(x=Month, y=average_monthly_RF, colour= state)
+)+geom_line()+facet_wrap("Station_number")
+
+rough_plot
+
+rough_plot+
+  labs(title="Average monthly rainfall per station", 
+                         y="Average Monthly Rainfall (mm)",
+                         x="Month",
+                         colour="Station location",
+                         caption="SOURCE:BOM meterological data")+
+  theme_bw()+
+  scale_x_continuous(breaks = c(1, 4, 7,10), label = c("Jan", "Apr", "July","Oct"))

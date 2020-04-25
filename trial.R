@@ -12,7 +12,6 @@ bom_stations
 
 bom_numeric_data <- bom_data %>% 
   separate(Temp_min_max,into = c("t_min", "t_max"), sep="/")%>% 
-  filter(t_min != "-",t_max != "-", Rainfall !="-", Solar_exposure !="-") %>% 
   mutate(t_min = as.numeric(t_min))%>% 
   mutate(t_max = as.numeric(t_max ))%>%
   mutate(Rainfall= as.numeric(Rainfall))%>%
@@ -75,3 +74,14 @@ final_plot <- plot_grid(tmax_tmin, tmax_rainfall, tmax_solarexposure, weather_da
 final_plot
 
 ggsave(filename = "results/plot.png", plot = final_plot, width = 30, height = 20, dpi = 300, units = "cm")
+
+# Question 4
+
+bom_data <- read_csv("raw_data/BOM_data.csv")
+bom_data
+
+bom_rainfall_data <- bom_data %>% 
+  filter(Rainfall !="-") %>% 
+  mutate(Rainfall= as.numeric(Rainfall))
+
+bom_rainfall_data  

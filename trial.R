@@ -8,7 +8,7 @@ bom_stations
 
 # Question 1
 
-# filter columns with values and convert values to numeric data
+# tidying up bom data (converting values to numeric data)
 
 bom_numeric_data <- bom_data %>% 
   separate(Temp_min_max,into = c("t_min", "t_max"), sep="/")%>% 
@@ -20,14 +20,16 @@ bom_numeric_data <- bom_data %>%
 
 bom_numeric_data
 
-# convert station numbers to numeric data 
+# tidying up bom stations data and converting station numbers 
+# to numeric values) 
 
 bom_stations_numeric <- gather(bom_stations,Station_number,value="value",2:21) %>% 
   spread(info, value="value") %>% 
   mutate(Station_number=as.numeric(Station_number))
+
 bom_stations_numeric
 
-# filter data for Perth station ID 9225
+# Data for Perth station ID 9225
 
 data_9225 <- full_join(bom_numeric_data,bom_stations_numeric) %>% 
   filter (Station_number == "9225")
@@ -37,9 +39,19 @@ data_9225
 # relationship between maximum and minimum temperature
 
 tmax_tmin <- ggplot(data_9225, aes(x=t_max, y=t_min)
-          )+geom_point()
+          )+geom_point(colour = "blue", size = 1, alpha=0.2)
+  
 tmax_tmin
 
+plot_1 <- tmax_tmin+
+  labs(title = "Figure 1", 
+  x = "maximum temperature", 
+  y= "minimum temperature")+theme_bw()+
+  theme(axis.text = element_text(size = 4),
+        axis.title = element_text(size = 8),
+        plot.title = element_text(size = 10))
+
+plot_1
 # relationship between maximum temperature and rainfall
 
 tmax_rainfall <- ggplot(data_9225, aes(x=t_max, y=Rainfall)

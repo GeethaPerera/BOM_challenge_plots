@@ -33,6 +33,8 @@ bom_stations_numeric
 data_9225 <- full_join(bom_numeric_data,bom_stations_numeric) %>% 
   filter (Station_number == "9225")
 
+data_9225
+
 # relationship between maximum and minimum temperature
 
 tmax_tmin <- ggplot(data_9225, aes(x=t_max, y=t_min)
@@ -60,7 +62,8 @@ tmax_solarexposure
 weather_data <- ggplot(data_9225, 
               aes(x=t_min, y=t_max, 
               colour=Solar_exposure, size=Rainfall)
-              )+geom_point()
+              )+geom_point(
+              )+theme(legend.position = "bottom")
 
 weather_data
 
@@ -71,4 +74,4 @@ library(cowplot)
 final_plot <- plot_grid(tmax_tmin, tmax_rainfall, tmax_solarexposure, weather_data)
 final_plot
 
-
+ggsave(filename = "results/plot.png", plot = final_plot, width = 30, height = 20, dpi = 300, units = "cm")

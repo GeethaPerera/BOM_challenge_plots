@@ -23,7 +23,8 @@ bom_numeric_data
 # tidying up bom stations data and converting station numbers 
 # to numeric values) 
 
-bom_stations_numeric <- gather(bom_stations,Station_number,value="value",2:21) %>% 
+bom_stations_numeric <- 
+  gather(bom_stations,Station_number,value="value",2:21) %>% 
   spread(info, value="value") %>% 
   mutate(Station_number=as.numeric(Station_number))
 
@@ -38,52 +39,90 @@ data_9225
 
 # relationship between maximum and minimum temperature
 
-tmax_tmin <- ggplot(data_9225, aes(x=t_max, y=t_min)
-          )+geom_point(colour = "blue", size = 1, alpha=0.2)
+tmax_tmin <- ggplot(data_9225, aes(x=t_max, y=t_min))+
+  geom_point(colour = "red", size = 1, alpha=0.2)
   
 tmax_tmin
 
 plot_1 <- tmax_tmin+
-  labs(title = "Figure 1", 
+  labs(title = "Figure 1: maximum temperature and minimum temperature", 
   x = "maximum temperature", 
-  y= "minimum temperature")+theme_bw()+
-  theme(axis.text = element_text(size = 4),
+  y= "minimum temperature")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 6),
         axis.title = element_text(size = 8),
         plot.title = element_text(size = 10))
 
 plot_1
+
 # relationship between maximum temperature and rainfall
 
-tmax_rainfall <- ggplot(data_9225, aes(x=t_max, y=Rainfall)
-)+geom_point()
+tmax_rainfall <- ggplot(data_9225, aes(x=t_max, y=Rainfall))+
+  geom_point(colour = "blue", size = 1, alpha=0.2)
 
 tmax_rainfall
 
+plot_2 <- tmax_rainfall+
+  labs(title = "Figure 2: maximum temperature and rainfall", 
+  x = "maximum temperature", 
+  y= "rainfall")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 6),
+        axis.title = element_text(size = 8),
+        plot.title = element_text(size = 10))
+
+plot_2
+
 # relationship between maximum temperature and solar exposure
 
-tmax_solarexposure <- ggplot(data_9225, aes(x=t_max, y=Solar_exposure)
-)+geom_point()
-tmax_solarexposure
+tmax_solarexp <- ggplot(data_9225, aes(x=t_max, y=Solar_exposure))+
+  geom_point(colour = "orange", size = 1, alpha=0.2)
+
+tmax_solarexp
+
+plot_3 <- tmax_solarexp+
+  labs(title = "Figure 3: maximum temperature and solar exposure", 
+  x = "maximum temperature", 
+  y= "solar exposure")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 6),
+        axis.title = element_text(size = 8),
+        plot.title = element_text(size = 10))
+
+plot_3
 
 # Question 2 - single scatter plot showing the relationships between 
 # min and max temperature, rainfall and solar exposure
 
 ?geom_point
 
-weather_data <- ggplot(data_9225, 
+data_all_9925 <- ggplot(data_9225, 
               aes(x=t_min, y=t_max, 
-              colour=Solar_exposure, size=Rainfall)
-              )+geom_point(
-              )+theme(legend.position = "bottom")
+              colour=Solar_exposure,size=Rainfall))+
+  geom_point(alpha=0.5)
+  
+data_all_9925
 
-weather_data
+plot_4 <- data_all_9925+
+  labs(title = "Figure 4: maximum and minimum temperature, solar exposure and rainfall", 
+  x = "minimum temperature", 
+  y= "maximum temperature")+
+  theme_bw()+
+  theme (axis.text = element_text(size = 6),
+         axis.title = element_text(size = 8),
+         plot.title = element_text(size = 10),
+         legend.position = ("bottom"),
+         legend.title = element_text(size = 8))
+       
+plot_4
 
 # Question 3 
 
 library(cowplot)
 
-final_plot <- plot_grid(tmax_tmin, tmax_rainfall, tmax_solarexposure, weather_data)
-final_plot
+final_plot <- plot_grid(plot_1, plot_2, plot_3, plot_4)
+
+final_plot 
 
 ggsave(filename = "results/plot.png", plot = final_plot, width = 30, height = 20, dpi = 300, units = "cm")
 

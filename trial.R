@@ -21,7 +21,7 @@ bom_numeric_data <- bom_data %>%
 bom_numeric_data
 
 # tidying up bom stations data and converting station numbers 
-# to numeric values) 
+# to numeric values 
 
 bom_stations_numeric <- 
   gather(bom_stations,Station_number,value="value",2:21) %>% 
@@ -46,8 +46,8 @@ tmax_tmin
 
 plot_1 <- tmax_tmin+
   labs(title = "Figure 1: maximum temperature and minimum temperature", 
-  x = "maximum temperature", 
-  y= "minimum temperature")+
+  x = "maximum temperature (°C)", 
+  y= "minimum temperature (°C)")+
   theme_bw()+
   theme(axis.text = element_text(size = 6),
         axis.title = element_text(size = 8),
@@ -64,8 +64,8 @@ tmax_rainfall
 
 plot_2 <- tmax_rainfall+
   labs(title = "Figure 2: maximum temperature and rainfall", 
-  x = "maximum temperature", 
-  y= "rainfall")+
+  x = "maximum temperature (°C)", 
+  y= "rainfall (mm)")+
   theme_bw()+
   theme(axis.text = element_text(size = 6),
         axis.title = element_text(size = 8),
@@ -82,8 +82,8 @@ tmax_solarexp
 
 plot_3 <- tmax_solarexp+
   labs(title = "Figure 3: maximum temperature and solar exposure", 
-  x = "maximum temperature", 
-  y= "solar exposure")+
+  x = "maximum temperature (°C)", 
+  y= "solar exposure (MJ/ m2)")+
   theme_bw()+
   theme(axis.text = element_text(size = 6),
         axis.title = element_text(size = 8),
@@ -105,8 +105,8 @@ data_all_9925
 
 plot_4 <- data_all_9925+
   labs(title = "Figure 4: maximum and minimum temperature, solar exposure and rainfall", 
-  x = "minimum temperature", 
-  y= "maximum temperature")+
+  x = "minimum temperature (°C)", 
+  y= "maximum temperature (°C)")+
   theme_bw()+
   theme (axis.text = element_text(size = 6),
          axis.title = element_text(size = 8),
@@ -124,9 +124,11 @@ final_plot <- plot_grid(plot_1, plot_2, plot_3, plot_4)
 
 final_plot 
 
-ggsave(filename = "results/plot.png", plot = final_plot, width = 30, height = 20, dpi = 300, units = "cm")
+ggsave(filename = "results/plots_station_9925.png", plot = final_plot, width = 30, height = 20, dpi = 300, units = "cm")
 
 # Question 4
+
+# tidying up rainfall data
 
 bom_data <- read_csv("raw_data/BOM_data.csv")
 bom_data
@@ -136,50 +138,49 @@ bom_rainfall_data <- bom_data %>%
   mutate(Rainfall= as.numeric(Rainfall))
 
 bom_rainfall_data 
-view(bom_rainfall_data)
 
+bom_stations_numeric # tidy bom_stations data (from question 1)
 
-
-
-bom_stations_numeric
 
 bom_rainfall_full <- full_join(bom_rainfall_data, bom_stations_numeric)
 bom_rainfall_full
 
-view(bom_rainfall_full)
 
+# calculating monthly average rainfall for each station
 
-rainfall_by_station
-
-bom_monthly_total_RF <- bom_rainfall_full %>% 
-  group_by(Station_number, name, state, Year, Month, state) %>% 
-  summarise(monthly_total_RF=sum(Rainfall))
-
-
-bom_monthly_average_RF<- bom_monthly_total_RF %>% 
+monthly_average_RF <- bom_rainfall_full %>% 
+  group_by(Station_number, name, state, Year, Month) %>% 
+  summarise(monthly_total_RF=sum(Rainfall)) %>% 
   group_by(Station_number,name, state, Month) %>% 
-  summarise(average_monthly_RF=mean(monthly_total_RF)) 
+  summarise(average_monthly_RF=mean(monthly_total_RF))
 
-bom_monthly_average_RF
+monthly_average_RF
 
-bom_text <- bom_monthly_average_RF %>% filter(Month==1)
+# plots
 
-bom_text 
-
-
-# generating plots
-
-rough_plot <- ggplot(bom_monthly_average_RF, 
+rough_RF_plot <- ggplot(monthly_average_RF, 
        mapping = aes(x=Month, y=average_monthly_RF, colour= state)
-)+geom_line()+facet_wrap("Station_number")
+)+geom_line()+facet_wrap("name")
 
-rough_plot
 
-rough_plot+
-  labs(title="Average monthly rainfall per station", 
-                         y="Average Monthly Rainfall (mm)",
-                         x="Month",
-                         colour="Station location",
-                         caption="SOURCE:BOM meterological data")+
+rough_RF_plot
+
+final_RF_plot <- rough_RF_plot+
+  labs(title="Average Monthly Rainfall", 
+       y="Average monthly rainfall (mm)",
+       x="Month",
+       colour="State",
+       caption="SOURCE: Meterological observations - BOM ")+
   theme_bw()+
-  scale_x_continuous(breaks = c(1, 4, 7,10), label = c("Jan", "Apr", "July","Oct"))
+  theme (axis.text = element_text(size = 6),
+         axis.title = element_text(size = 8),
+         plot.title = element_text(size = 12),
+         legend.title = element_text(size = 10),
+         strip.text = element_text(size = 6))+
+  scale_x_continuous(breaks = c(1, 4, 7,10), 
+  label = c("Jan", "Apr", "July","Oct"))
+
+
+final_RF_plot
+
+ggsave(filename = "results/rainfall_plot.png", plot = final_RF_plot, width = 30, height = 20, dpi = 300, units = "cm")

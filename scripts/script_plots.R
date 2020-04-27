@@ -125,3 +125,60 @@ final_plot
 
 ggsave(filename = "results/plots_station_9925.png", plot = final_plot, width = 30, height = 20, dpi = 300, units = "cm")
 
+# Question 4
+
+# tidying up rainfall data
+
+bom_data <- read_csv("raw_data/BOM_data.csv")
+bom_data
+
+bom_rainfall_data <- bom_data %>% 
+  filter(Rainfall !="-") %>% 
+  mutate(Rainfall= as.numeric(Rainfall))
+
+bom_rainfall_data 
+
+bom_stations_numeric # tidy bom_stations data (from question 1)
+
+
+bom_rainfall_full <- full_join(bom_rainfall_data, bom_stations_numeric)
+bom_rainfall_full
+
+
+# calculating monthly average rainfall for each station
+
+monthly_average_RF <- bom_rainfall_full %>% 
+  group_by(Station_number, name, state, Year, Month) %>% 
+  summarise(monthly_total_RF=sum(Rainfall)) %>% 
+  group_by(Station_number,name, state, Month) %>% 
+  summarise(average_monthly_RF=mean(monthly_total_RF))
+
+monthly_average_RF
+
+# plots
+
+rough_RF_plot <- ggplot(monthly_average_RF, 
+                        mapping = aes(x=Month, y=average_monthly_RF, colour= state))+
+  geom_line()+facet_wrap("name")
+
+rough_RF_plot
+
+final_RF_plot <- rough_RF_plot+
+  labs(title="Average Monthly Rainfall", 
+       y="Average monthly rainfall (mm)",
+       x="Month",
+       colour="State",
+       caption="SOURCE: Bureau of Meteorology ")+
+  theme_bw()+
+  theme (axis.text = element_text(size = 6),
+         axis.title = element_text(size = 8),
+         plot.title = element_text(size = 12),
+         legend.title = element_text(size = 10),
+         strip.text = element_text(size = 6))+
+         scale_x_continuous(breaks = c(1, 4, 7,10), 
+         label = c("Jan", "Apr", "July","Oct"))
+
+final_RF_plot
+
+ggsave(filename = "results/rainfall_plot.png", plot = final_RF_plot, width = 30, height = 20, dpi = 300, units = "cm")
+

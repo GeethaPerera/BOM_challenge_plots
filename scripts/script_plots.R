@@ -115,3 +115,13 @@ plot_4 <- data_all_9925+
 
 plot_4
 
+# Question 3 
+
+library(cowplot)
+
+final_plot <- plot_grid(plot_1, plot_2, plot_3, plot_4)
+
+final_plot 
+
+ggsave(filename = "results/plots_station_9925.png", plot = final_plot, width = 30, height = 20, dpi = 300, units = "cm")
+

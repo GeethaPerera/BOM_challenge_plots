@@ -91,3 +91,27 @@ plot_3 <- tmax_solarexp+
 
 plot_3
 
+# Question 2 - single scatter plot showing the relationships between 
+# min and max temperature, rainfall and solar exposure
+
+
+data_all_9925 <- ggplot(data_9225, 
+                        aes(x=t_min, y=t_max, 
+                            colour=Solar_exposure,size=Rainfall))+
+  geom_point(alpha=0.5)
+
+data_all_9925
+
+plot_4 <- data_all_9925+
+  labs(title = "Figure 4: maximum and minimum temperature, solar exposure and rainfall", 
+       x = "minimum temperature (°C)", 
+       y= "maximum temperature (°C)")+
+  theme_bw()+
+  theme (axis.text = element_text(size = 6),
+         axis.title = element_text(size = 8),
+         plot.title = element_text(size = 10),
+         legend.position = ("bottom"),
+         legend.title = element_text(size = 8))
+
+plot_4
+

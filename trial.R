@@ -159,9 +159,8 @@ monthly_average_RF
 # plots
 
 rough_RF_plot <- ggplot(monthly_average_RF, 
-       mapping = aes(x=Month, y=average_monthly_RF, colour= state)
-)+geom_line()+facet_wrap("name")
-
+  mapping = aes(x=Month, y=average_monthly_RF, colour= state))+
+  geom_line()+facet_wrap("name")
 
 rough_RF_plot
 
@@ -170,17 +169,16 @@ final_RF_plot <- rough_RF_plot+
        y="Average monthly rainfall (mm)",
        x="Month",
        colour="State",
-       caption="SOURCE: Meterological observations - BOM ")+
+       caption="SOURCE: Bureau of Meteorology ")+
   theme_bw()+
   theme (axis.text = element_text(size = 6),
          axis.title = element_text(size = 8),
          plot.title = element_text(size = 12),
          legend.title = element_text(size = 10),
          strip.text = element_text(size = 6))+
-  scale_x_continuous(breaks = c(1, 4, 7,10), 
-  label = c("Jan", "Apr", "July","Oct"))
-
-
+         scale_x_continuous(breaks = c(1, 4, 7,10), 
+         label = c("Jan", "Apr", "July","Oct"))
+    
 final_RF_plot
 
 ggsave(filename = "results/rainfall_plot.png", plot = final_RF_plot, width = 30, height = 20, dpi = 300, units = "cm")
